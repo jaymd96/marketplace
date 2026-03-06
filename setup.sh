@@ -42,6 +42,13 @@ run_build() {
     ok "Build complete"
 }
 
+sync_claude_plugin() {
+    info "Syncing .claude-plugin/marketplace.json"
+    mkdir -p "$REPO_ROOT/.claude-plugin"
+    ln -sf ../marketplace.json "$REPO_ROOT/.claude-plugin/marketplace.json"
+    ok "Symlink created"
+}
+
 install_plugin() {
     info "Installing guild-skills plugin for Claude Code"
     check_cmd guild
@@ -64,6 +71,7 @@ case "$MODE" in
     full|*)
         check_guild
         run_build
+        sync_claude_plugin
         run_validate
         install_plugin
         ;;

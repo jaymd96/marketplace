@@ -1,18 +1,1 @@
-{
-  "name": "jaymd96-marketplace",
-  "owner": {
-    "name": "jaymd96",
-    "email": "jaymd96@users.noreply.github.com"
-  },
-  "plugins": [
-    {
-      "name": "pytest-testing",
-      "source": "./plugins/pytest-testing",
-      "description": "Write, run, and optimise Python test suites with pytest. Speed-first defaults, structured LLM output via pytest-verdict, progressive guidance from first test to CI pipeline.",
-      "version": "0.1.0"
-    }
-  ],
-  "metadata": {
-    "description": "Personal Claude Code plugin marketplace."
-  }
-}
+../marketplace.json
