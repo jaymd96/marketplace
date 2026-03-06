@@ -1,0 +1,4 @@
+[plugin]
+name = "pytest-testing"
+version = "0.1.0"
+description = "Write, run, and optimise Python test suites with pytest. Speed-first defaults, structured LLM output via pytest-verdict, progressive guidance from first test to CI pipeline."

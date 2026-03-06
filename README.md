@@ -1,17 +1,14 @@
 # jaymd96-marketplace
 
-Personal Claude Code plugin marketplace maintained by **jaymd96**.
+Personal Claude Code plugin marketplace.
 
-Managed with [guild](https://github.com/jaymd96/guild). Consumed by [psclaude](https://github.com/jaymd96/psclaude).
+A Claude Code plugin marketplace maintained by **jaymd96**.
 
 ## Plugins
 
-None yet. Add one with:
-
-```bash
-pip install jaymd96-guild
-guild add my-plugin --description "What it does"
-```
+| Plugin | Version | Source | Description |
+|--------|---------|--------|-------------|
+| pytest-testing | 0.1.0 | local | Write, run, and optimise Python test suites with pytest. Speed-first defaults, structured LLM output via pytest-verdict, progressive guidance from first test to CI pipeline. |
 
 ## Usage
 
@@ -19,21 +16,7 @@ guild add my-plugin --description "What it does"
 from psclaude import PsClaude
 
 client = PsClaude(
-    marketplaces=["jaymd96/marketplace"],
-    install=["<plugin-name>@jaymd96-marketplace"],
+    marketplaces=["<owner>/jaymd96-marketplace"],
+    install=["pytest-testing@jaymd96-marketplace"],
 )
 ```
-
-## Development
-
-```bash
-./setup.sh            # Full setup (validate + install guild-skills plugin)
-guild add <name>      # Add a new plugin
-guild build           # Regenerate marketplace.json
-guild validate        # Check structure
-guild list            # Show all plugins
-```
-
-## License
-
-MIT
