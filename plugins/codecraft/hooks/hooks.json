@@ -1,0 +1,28 @@
+[
+  {
+    "event": "PostToolUse",
+    "matcher": {
+      "tool_name": "Edit|Write",
+      "file_path": "\\.py$"
+    },
+    "hooks": [
+      {
+        "type": "command",
+        "command": "ruff format \"$CLAUDE_FILE_PATH\" 2>/dev/null; ruff check --fix \"$CLAUDE_FILE_PATH\" 2>/dev/null || true"
+      }
+    ]
+  },
+  {
+    "event": "PreToolUse",
+    "matcher": {
+      "tool_name": "Bash",
+      "command": "^git commit"
+    },
+    "hooks": [
+      {
+        "type": "prompt",
+        "prompt": "Before committing, verify:\n1. Have all three validation passes been completed? (correctness, compliance, quality)\n2. Are you committing specific files (not `git add -A`)?\n3. Does the commit message reference the task ID?\n4. Has the tracker been updated?\n\nIf any answer is NO, complete those steps first. Only proceed with the commit if all checks pass."
+      }
+    ]
+  }
+]

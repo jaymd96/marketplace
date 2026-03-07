@@ -1,0 +1,4 @@
+[plugin]
+name = "codecraft"
+version = "0.1.0"
+description = "The craft of turning specs into working code. Iterative, verification-gated software development through disciplined state machines. The execution counterpart to spec-builder."
