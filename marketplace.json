@@ -16,6 +16,12 @@
       "source": "./plugins/spec-builder",
       "description": "Build product specifications through extended human conversation. A harness for turning noisy, non-linear human input into coherent, implementable specs (Symphony-style).",
       "version": "1.0.0"
+    },
+    {
+      "name": "research-builder",
+      "source": "./plugins/research-builder",
+      "description": "Refine research ideas through extended conversation. Track idea threads, build concept graphs, link to prior work, and progressively tighten arguments into formal results.",
+      "version": "1.0.0"
     }
   ],
   "metadata": {

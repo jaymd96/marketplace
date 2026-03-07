@@ -1,0 +1,4 @@
+[plugin]
+name = "research-builder"
+version = "1.0.0"
+description = "Refine research ideas through extended conversation. A harness for navigating the random walk of ideas, linking to prior work, and progressively tightening arguments into formal results."
