@@ -1,6 +1,6 @@
 ---
 name: orient
-description: "Quick briefing on current research project state. Use at session start, or when the user says 'where are we', 'what were we working on', 'catch me up', or 'brief me'."
+description: "Quick briefing on current research project state. Use for standalone orientation when returning to a project, or when the user says 'where are we', 'what were we working on', 'catch me up', 'brief me', 'where did we leave off', 'recap', or 'what's the status'."
 ---
 
 # orient

@@ -60,11 +60,56 @@ Survey: /5 | Connect: /5 | Formalize: /5 | Critique: /5 | Depth: /5 | Progress: 
 Survey: /5 | Connect: /5 | Formalize: /5 | Critique: /5 | Depth: /5 | Progress: /5
 ```
 
-## Self-Evolution
+## Self-Evolution (Rare)
 
-Same protocol as spec-builder: evidence (3+ sessions) → propose → trial →
-soak → evaluate → commit or revert. See the spec-builder meta.md for the
-full process — it applies identically here.
+Modify the research-builder system itself based on accumulated evidence.
+Invoke rarely — only for changes backed by evidence from actual sessions.
 
-Changes to the research-builder system affect every future session.
-The asymmetry demands caution.
+Changes affect every future session. A bad change silently degrades
+every conversation. The asymmetry demands caution.
+
+### Process
+
+```
+EVIDENCE → PROPOSE → TRIAL → SOAK → EVALUATE → COMMIT or REVERT
+```
+
+**EVIDENCE:** Gather observations supported by 3+ session reviews (or explicit
+human request). Articulate: what's happening, what should happen, why the
+current design causes this, how strong the evidence is.
+
+**PROPOSE:** Write `evolution/proposals/EP-<N>-<name>.md` with: problem,
+proposed change, rationale, risk assessment, before/after, alternatives.
+
+**TRIAL:** Create modified file in `evolution/trials/`. Follow the trial
+version for 2-3 sessions. Original files stay unchanged as fallback.
+
+**SOAK:** Record observations per session in the proposal:
+```
+## Soak Log
+- Session <N>: <observation>
+```
+
+**EVALUATE:**
+- Clear improvement → COMMIT
+- Neutral → REVERT (complexity without benefit)
+- Regression → REVERT
+- Mixed → refine and restart TRIAL
+
+**COMMIT:** Update original files. Add to `evolution/CHANGELOG.md`. Remove
+trial. Git commit: `evolve: EP-<N> — <description>`
+
+**REVERT:** Remove trial. Update proposal status. Add to CHANGELOG.
+
+### What NOT to Evolve
+
+- ENTRYPOINT.md session protocol (it's the anchor)
+- File structure (breaks in-progress projects)
+- Anything based on one session (not a pattern)
+
+### What IS Safe to Evolve
+
+- Conversation tactics, question frameworks
+- Template formats
+- Self-review dimensions
+- Adding new stance guidance

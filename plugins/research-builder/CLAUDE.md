@@ -7,14 +7,16 @@ tightening arguments into formal results.
 
 ## When to use these skills
 
-- **research-session** — The user wants to explore research ideas, refine their
-  thinking, discuss a paper, or work toward a thesis/publication. Main entry point.
+- **research-session** — Primary entry point. The user wants to explore research
+  ideas, refine their thinking, discuss a paper, or work toward a thesis/publication.
 - **orient** — Quick briefing on current research project state at session start.
 - **new-thread** — Create a new idea thread when a new line of reasoning emerges.
-- **checkpoint** — Serialize session state, write self-review, and git commit.
+- **checkpoint** — Save progress, write self-review, and git commit.
 - **threads** — Show status of all idea threads (active, parked, dead-end, merged).
 - **connections** — Find and map connections between threads, concepts, or papers.
 - **critique** — Stress-test a line of reasoning for logical soundness.
+- **literature** — Search for and summarize relevant papers, theorems, or prior work.
+- **formalize** — Make arguments rigorous — write definitions, theorems, proof sketches.
 
 ## How research differs from spec-building
 

@@ -28,6 +28,8 @@ check -f "$PROJECT_DIR/internal/CONCEPT_GRAPH.md"
 check -f "$PROJECT_DIR/internal/THREAD_MAP.md"
 check -f "$PROJECT_DIR/internal/LITERATURE.md"
 check -f "$PROJECT_DIR/internal/CONSISTENCY_LOG.md"
+check -f "$PROJECT_DIR/internal/GAPS.md"
+check -f "$PROJECT_DIR/internal/BRAINSTORM.md"
 
 if [ -f "$PROJECT_DIR/state/PROJECT_STATE.md" ]; then
   for field in product_name research_phase last_stance; do
