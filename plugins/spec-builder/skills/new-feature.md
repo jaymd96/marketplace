@@ -1,14 +1,9 @@
+---
+name: new-feature
+description: "Create a new feature tracking directory with template files. Use when a new feature area is identified, or the user says 'let us track [feature]', 'add a new feature', 'create a space for [feature]', or 'start tracking [name]'."
+---
+
 # new feature
-
-Create a new feature dossier folder with template files.
-
-## Trigger
-
-- A new feature area is identified during conversation
-- "Let's track [feature name]"
-- "Create a space for [feature]"
-
-## What to do
 
 Given a feature name:
 

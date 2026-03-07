@@ -65,7 +65,7 @@ Do not skip ENTRYPOINT.md. Do not guess the state. Read it every time.
 ```
 spec-builder/                         # Landing zone
   README.md                           # Harness architecture and design rationale
-  .claude-plugin/plugin.json          # Plugin manifest
+  plugin.toml                         # Plugin manifest
 
   agents/                             # Subagents (isolated context)
     orient.md                         # Session-start briefing
@@ -73,13 +73,13 @@ spec-builder/                         # Landing zone
     spec-reviewer.md                  # 5-dimension spec quality auditor
 
   skills/                             # Invocable commands
-    spec-session/SKILL.md             # /spec-session — main entry point
-    orient/SKILL.md                   # /orient — quick briefing via subagent
-    new-feature/SKILL.md              # /new-feature <name> — create dossier
-    checkpoint/SKILL.md               # /checkpoint — session-end protocol
-    coverage/SKILL.md                 # /coverage — feature status table
-    consistency/SKILL.md              # /consistency — find contradictions
-    review/SKILL.md                   # /review — spec quality audit
+    spec-session.md                   # Main entry point
+    orient.md                         # Quick briefing via subagent
+    new-feature.md                    # Create feature tracking directory
+    checkpoint.md                     # Session-end protocol
+    coverage.md                       # Feature status table
+    consistency.md                    # Find contradictions
+    review.md                         # Spec quality audit
 
   scripts/                            # Mechanical operations
     bootstrap-project.sh              # Create project directory

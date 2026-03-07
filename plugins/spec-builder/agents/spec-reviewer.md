@@ -3,6 +3,7 @@ name: spec-reviewer
 description: Audit the specification for completeness, consistency, clarity, testability, and organization. Use when reviewing spec quality.
 tools: Read, Glob, Grep
 model: opus
+color: magenta
 maxTurns: 10
 ---
 

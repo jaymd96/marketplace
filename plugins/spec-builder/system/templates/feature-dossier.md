@@ -37,7 +37,7 @@
 
 ## Completion Checklist
 
-<!-- From workflow 02-explore.md ASSESS state -->
+<!-- From understand.md, "Journey Context: During Explore" -->
 
 - [ ] Core behavior described (happy path)
 - [ ] At least 2 error/edge cases identified

@@ -83,7 +83,7 @@ Constraints are encoded as workflow rules and protocols, not optional guidelines
 - Must serialize state before ending (no lost progress)
 - Must commit to git after every session (no invisible changes)
 
-**The self-evolution protocol** (workflow 10) prevents impulsive system changes:
+**The self-evolution protocol** (`workflows/meta.md`) prevents impulsive system changes:
 - Requires 3+ session reviews citing the same issue (no single-observation changes)
 - Requires a formal proposal with risk assessment (no undocumented changes)
 - Requires a 2-3 session trial period (no untested changes)
@@ -103,11 +103,11 @@ Over many sessions, entropy accumulates — documents drift from each other,
 terminology shifts, old decisions get forgotten. The system has three maintenance
 mechanisms:
 
-**Session self-review** (workflow 09): After every session, the agent scores itself
-on 6 dimensions (signal, steering, consistency, hygiene, progress, depth). Patterns
-accumulate across reviews, making decay visible before it compounds.
+**Session self-review** (`workflows/meta.md`): After every session, the agent scores
+itself on 6 dimensions (signal, steering, consistency, hygiene, progress, depth).
+Patterns accumulate across reviews, making decay visible before it compounds.
 
-**Self-evolution protocol** (workflow 10): When observations accumulate across 3+
+**Self-evolution protocol** (`workflows/meta.md`): When observations accumulate across 3+
 sessions, the system can modify its own workflows — with a soak period, trial
 evaluation, and explicit commit/revert decision. This is how the harness improves
 over time without decaying through impulsive changes.

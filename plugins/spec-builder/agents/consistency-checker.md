@@ -3,6 +3,7 @@ name: consistency-checker
 description: Cross-reference all project documents to find contradictions, terminology drift, unresolved references, and gaps. Use when checking consistency across the spec project.
 tools: Read, Glob, Grep
 model: sonnet
+color: yellow
 maxTurns: 8
 ---
 

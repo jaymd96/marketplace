@@ -3,6 +3,7 @@ name: orient
 description: Produce a compact session briefing from project state files. Use at the start of every spec-builder session to orient without consuming the main agent's context.
 tools: Read, Glob, Bash, Grep
 model: sonnet
+color: cyan
 maxTurns: 5
 ---
 

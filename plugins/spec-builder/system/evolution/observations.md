@@ -4,7 +4,7 @@ Observations about what's working and what isn't in the spec-builder system.
 Each observation should reference specific session reviews as evidence.
 
 When an observation has 3+ supporting sessions, it becomes eligible for an
-evolution proposal (see `workflows/10-self-evolve.md`).
+evolution proposal (see `workflows/meta.md`).
 
 ---
 
