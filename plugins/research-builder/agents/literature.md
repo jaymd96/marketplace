@@ -3,6 +3,7 @@ name: literature
 description: Search for and summarize relevant papers, theorems, or concepts. Use when the researcher mentions prior work or needs to find related results.
 tools: Read, Glob, Grep, WebSearch, WebFetch
 model: sonnet
+color: green
 maxTurns: 8
 ---
 

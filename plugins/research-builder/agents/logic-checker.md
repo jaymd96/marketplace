@@ -3,6 +3,7 @@ name: logic-checker
 description: Stress-test a line of reasoning for logical soundness. Use when the researcher wants to verify an argument or the agent suspects a logical issue.
 tools: Read, Glob, Grep
 model: opus
+color: red
 maxTurns: 10
 ---
 

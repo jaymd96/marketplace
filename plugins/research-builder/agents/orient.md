@@ -3,6 +3,7 @@ name: orient
 description: Produce a compact session briefing from research project state files. Use at session start.
 tools: Read, Glob, Bash, Grep
 model: sonnet
+color: cyan
 maxTurns: 5
 ---
 

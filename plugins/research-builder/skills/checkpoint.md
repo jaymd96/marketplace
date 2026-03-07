@@ -1,14 +1,9 @@
+---
+name: checkpoint
+description: "Save progress and wrap up a research session. Use at session end, when the user says 'save progress', 'let us wrap up', 'commit progress', or when context is getting long."
+---
+
 # checkpoint
-
-Serialize session state, write self-review, and git commit.
-
-## Trigger
-
-- End of session
-- "Let's save progress"
-- Context getting long
-
-## What to do
 
 1. Update PROJECT_STATE.md — phase, active threads, resumption prompt
 2. Update SESSION_LOG.md — what happened (2-5 sentences)

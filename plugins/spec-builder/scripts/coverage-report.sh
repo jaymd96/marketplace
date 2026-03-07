@@ -37,17 +37,14 @@ for feature_dir in "$FEATURES_DIR"/*/; do
   fi
 
   if [ -f "$feature_dir/questions.md" ]; then
-    open_q=$(grep -c '^\- \[ \]' "$feature_dir/questions.md" 2>/dev/null || echo 0)
+    open_q=$(grep -c '^\- \[ \]' "$feature_dir/questions.md" || true)
   fi
 
   if [ -f "$feature_dir/resolved.md" ]; then
-    resolved_q=$(grep -c '^\- \[x\]\|^###' "$feature_dir/resolved.md" 2>/dev/null || echo 0)
+    resolved_q=$(grep -c '^\- \[x\]\|^###' "$feature_dir/resolved.md" || true)
   fi
 
-  if [ "$notes" -gt 5 ]; then
-    status="PARTIAL"
-    PARTIAL=$((PARTIAL + 1))
-  elif [ "$notes" -gt 0 ]; then
+  if [ "$notes" -gt 0 ]; then
     status="PARTIAL"
     PARTIAL=$((PARTIAL + 1))
   else
