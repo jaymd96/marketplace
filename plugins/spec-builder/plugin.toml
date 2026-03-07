@@ -1,0 +1,4 @@
+[plugin]
+name = "spec-builder"
+version = "1.0.0"
+description = "Build product specifications through extended human conversation. A harness for turning noisy, non-linear human input into coherent, implementable specs (Symphony-style)."

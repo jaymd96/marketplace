@@ -10,6 +10,12 @@
       "source": "./plugins/pytest-testing",
       "description": "Write, run, and optimise Python test suites with pytest. Speed-first defaults, structured LLM output via pytest-verdict, progressive guidance from first test to CI pipeline.",
       "version": "0.1.0"
+    },
+    {
+      "name": "spec-builder",
+      "source": "./plugins/spec-builder",
+      "description": "Build product specifications through extended human conversation. A harness for turning noisy, non-linear human input into coherent, implementable specs (Symphony-style).",
+      "version": "1.0.0"
     }
   ],
   "metadata": {
