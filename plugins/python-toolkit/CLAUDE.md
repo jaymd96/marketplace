@@ -43,15 +43,24 @@ For any library below, read the full reference: `references/<name>.md`
 |---------|---------|---------|
 | attrs | 24.3.0 | Classes without boilerplate (@define, @frozen) |
 | cattrs | 24.1.2 | Composable structure/unstructure converters |
-| pydantic | 2.10+ | Boundary validation only (API input/output) |
+| pydantic | 2.10+ | Boundary validation (API input/output, settings) |
+| pydantic-settings | 2.7+ | Typed settings from env vars, .env files, secrets |
+| sqlmodel | 0.0.22+ | SQLAlchemy + Pydantic ORM (database models) |
 | orjson | 3.10+ | Fast JSON (native datetime/numpy support) |
 | pyyaml | 6.0.2 | YAML parsing |
 | deepdiff | 8.0+ | Deep comparison and diffing |
+
+### Web & API
+| Library | Version | Use For |
+|---------|---------|---------|
+| fastapi | 0.115+ | Web API framework (async, OpenAPI, DI) |
+| uvicorn | 0.34+ | ASGI server (runs FastAPI) |
 
 ### HTTP & Networking
 | Library | Version | Use For |
 |---------|---------|---------|
 | httpx | 0.28.1 | Modern HTTP client (sync + async, connection pooling) |
+| aiohttp | 3.11+ | Async HTTP client/server, WebSocket client |
 | websockets | 14.1+ | WebSocket client and server |
 | grpcio | 1.68+ | gRPC client and server |
 
@@ -86,6 +95,7 @@ For any library below, read the full reference: `references/<name>.md`
 | returns | 0.23+ | Typed error handling (Result, Maybe) |
 | toolz | 1.0+ | Functional programming primitives |
 | immutables | 0.21+ | High-performance immutable mappings |
+| burr | 0.40+ | Stateful application framework (actions, state machines) |
 
 ### Resilience & Configuration
 | Library | Version | Use For |
@@ -108,7 +118,9 @@ For any library below, read the full reference: `references/<name>.md`
 |---------|---------|---------|
 | casbin | 1.36+ | Policy-based authorization (RBAC, ABAC) |
 | pyjwt | 2.9+ | JWT token creation and verification |
+| jwcrypto | 1.5+ | JWT/JWE/JWS cryptography (advanced) |
 | cryptography | 44.0+ | Encryption, signing, certificates |
+| pyotp | 2.9+ | TOTP/HOTP one-time passwords (MFA) |
 
 ### Background Jobs
 | Library | Version | Use For |
@@ -139,9 +151,16 @@ For any library below, read the full reference: `references/<name>.md`
 | invoke | 2.2+ | Local task runner |
 | docker | 7.1+ | Docker client (build, run, manage) |
 | kubernetes | 31.0+ | Kubernetes API client |
+| kopf | 1.37+ | Kubernetes operator framework |
 | gitpython | 3.1+ | Programmatic git operations |
 | watchdog | 6.0+ | File system event monitoring |
 | boto3 | 1.35+ | AWS SDK (S3, SQS, DynamoDB, etc.) |
+
+### Notifications & Integrations
+| Library | Version | Use For |
+|---------|---------|---------|
+| slack-sdk | 3.33+ | Slack API (messages, Block Kit, events) |
+| questionary | 2.1+ | Interactive CLI prompts (select, confirm, text) |
 
 ### GraphQL
 | Library | Version | Use For |
