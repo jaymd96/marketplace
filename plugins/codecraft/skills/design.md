@@ -5,6 +5,8 @@ description: "Plan changes before writing code. Produces an ordered change list 
 
 # design
 
+This skill implements **Planning Mode** (see `system/workflows/planning.md`).
+
 Convert understanding into a concrete, ordered plan. This is the blueprint
 for the BUILD phase. No code changes yet — only planning.
 

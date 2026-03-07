@@ -5,6 +5,8 @@ description: "Run the full three-pass quality gate after implementation is compl
 
 # verify
 
+This skill implements **Validation Mode** (see `system/workflows/validation.md`).
+
 Three-pass quality gate. All passes must succeed before the task can ship.
 Use the verifier subagent if available; otherwise run directly.
 

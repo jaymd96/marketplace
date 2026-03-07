@@ -5,6 +5,8 @@ description: "Deep-read a spec and all code it references. Build a mental model 
 
 # understand
 
+This skill implements **Analysis Mode** (see `system/workflows/analysis.md`).
+
 Read everything relevant to the task. No code changes in this phase — only
 comprehension. The goal is to answer four questions before proceeding.
 

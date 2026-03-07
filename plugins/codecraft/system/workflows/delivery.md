@@ -64,8 +64,8 @@ If pull introduces conflicts:
 ### 5. Unlock
 Remove lock file if one was created:
 ```bash
-rm current_tasks/<TASK_ID>.txt
-git add current_tasks/<TASK_ID>.txt
+rm current_tasks/<TASK_ID>.lock
+git add current_tasks/<TASK_ID>.lock
 git commit -m "unlock: <TASK_ID>"
 ```
 

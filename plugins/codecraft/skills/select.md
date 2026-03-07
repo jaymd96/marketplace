@@ -10,15 +10,17 @@ context.
 
 ## Steps
 
-1. **Find eligible tasks.** Read the tracker. Filter for tasks with status
-   `todo` whose dependencies are all `done`. If the user specified a task ID,
-   validate that task is eligible.
+1. **Find eligible tasks.** Read the tracker. The tracker is a markdown file
+   with task tables. Each row has: ID, status (`todo`/`in_progress`/`done`/
+   `blocked`), spec path, and dependencies. Parse the table to find eligible
+   tasks: those with status `todo` whose dependencies are all `done`. If the
+   user specified a task ID, validate that task is eligible.
 
 2. **Check for existing locks.** If a lock file exists in `current_tasks/`
    for another task, that task should be resolved first (finish it or explicitly
    abandon it). Don't claim two tasks simultaneously.
 
-3. **Create the lock.** Write a lock file at `current_tasks/<TASK_ID>.txt`
+3. **Create the lock.** Write a lock file at `current_tasks/<TASK_ID>.lock`
    containing: task ID, timestamp, session context. This signals to other
    agents that this task is claimed.
 

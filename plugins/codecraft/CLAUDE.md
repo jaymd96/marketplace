@@ -100,23 +100,27 @@ configuration:
 ```yaml
 ---
 tracker: docs/engineering/tracker.md
-test_command: "python3 -m pytest tests/ -m 'not slow and not k3s' --timeout=30 -q"
+test_command: "python3 -m pytest tests/ -x -q"
 enforce_commands:
-  - "python3 -m ruff check ."
-  - "python3 -m ruff format --check ."
-ratchet_scripts: scripts/checks/
+  - "ruff check ."
+  - "ruff format --check ."
+lock_dir: current_tasks
+stuck_notes_dir: stuck_notes
 conventions:
   line_length: 100
   python_target: "3.11+"
   id_type: RID
 ---
 
-## Additional context for this project
+## Project Context
 
 - Hub/Spoke architecture. Hub is FastAPI, Spoke is Burr.
 - Always use RIDs, never integer IDs.
 - State machines via `transitions` library.
 ```
+
+All fields are optional. If `lock_dir` or `stuck_notes_dir` are omitted,
+codecraft defaults to `current_tasks/` and `stuck_notes/` in the project root.
 
 ## Relationship to Other Plugins
 

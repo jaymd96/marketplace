@@ -5,6 +5,8 @@ description: "End of session or task. Commits work, updates tracker, writes prog
 
 # handoff
 
+This skill implements **Delivery Mode** (see `system/workflows/delivery.md`).
+
 Package completed work for delivery or continuation. Handles both successful
 completion and partial-progress handoff.
 
@@ -24,17 +26,17 @@ completion and partial-progress handoff.
 3. **Update tracker.** Change the task's status from `in-progress` to `done`.
    Add completion timestamp if the tracker format supports it.
 
-4. **Pull and resolve conflicts.** Run `git pull --rebase` to incorporate any
+4. **Pull and resolve conflicts.** Run `git pull origin main --no-edit` to incorporate any
    upstream changes. Resolve conflicts if they arise; re-run /verify after
    conflict resolution.
 
 5. **Push** if operating in a multi-agent or remote setup.
 
-6. **Remove lock file.** Delete `current_tasks/<TASK_ID>.txt`.
+6. **Remove lock file.** Delete `current_tasks/<TASK_ID>.lock`.
 
 7. **Print completion marker:**
    ```
-   AGENT_DONE: <TASK_ID> — completed
+   AGENT_DONE: <TASK_ID> -- completed
    ```
 
 ## Partial Handoff (budget low or session ending)
@@ -63,7 +65,7 @@ When you can't finish the task, preserve maximum context for the next session:
 
 5. **Print handoff marker:**
    ```
-   AGENT_DONE: <TASK_ID> — partial (units 1-3/7 complete)
+   AGENT_DONE: <TASK_ID> -- partial (units 1-3/7 complete)
    ```
 
 ## Emergency Handoff (budget critical, <10%)
@@ -73,6 +75,29 @@ When budget is nearly exhausted:
 1. `git add` all changed files
 2. `git commit -m "wip: emergency handoff <TASK_ID>"`
 3. Write a minimal stuck note with current state
-4. Print: `AGENT_DONE: <TASK_ID> — emergency handoff`
+4. Print: `AGENT_DONE: <TASK_ID> -- emergency handoff`
 
 Don't spend remaining budget on polish. Save it for the commit.
+
+## Progress Note Template
+
+When writing a progress note for incomplete work, include:
+
+```
+# <TASK_ID> -- Progress Note
+**Session:** <date/time>
+**Status:** partial | blocked | stuck
+
+## Completed
+- <list of completed units from the change list>
+
+## In Progress
+- <current unit and its state>
+
+## Remaining
+- <list of uncompleted units>
+
+## Context for Next Session
+- <key insights, failed approaches, important findings>
+- <any gotchas the next session should know about>
+```

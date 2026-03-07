@@ -10,9 +10,17 @@ skill invoked in a session.
 
 ## Steps
 
-1. **Read project config.** Find and read `.codecraft.local.md` in the project
-   root. Extract: tracker path, test_command, enforce_commands, conventions.
-   If the file doesn't exist, ask the user for tracker location and test command.
+1. **Read project config.** Find and read `.codecraft.local.md`. Search in
+   this order:
+   1. Current working directory
+   2. Git repository root (`git rev-parse --show-toplevel`)
+
+   If found, parse the YAML frontmatter to extract: tracker path,
+   test_command, enforce_commands, conventions. Read the markdown body for
+   additional project context.
+
+   If not found, proceed with defaults and ask the user for tracker location
+   and test command.
 
 2. **Read the tracker.** Open the tracker file. Parse the task list: identify
    each task's ID, status (todo/in-progress/done/blocked), dependencies, and

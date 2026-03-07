@@ -1,4 +1,4 @@
-# Exec Engine — Entry Point
+# Codecraft — Entry Point
 
 **Read this document when starting execution work. It routes you to the right
 state and the right workflow.**
@@ -40,7 +40,62 @@ verify before you build. The information dependencies are genuine.
 something (→ back to understand). While verifying, you'll find issues (→ refine
 or rethink). The arc describes the center of gravity, not a rigid sequence.
 
+## Autonomous Invocation
+
+Codecraft works in both **interactive** (human present) and **autonomous**
+(`claude -p`) modes. The arc and modes are identical in both cases -- only
+the invocation mechanism differs.
+
+**Interactive mode:** The user invokes skills directly via `/orient`,
+`/design`, `/verify`, etc. The human decides when to transition between
+stages and can skip or reorder as judgment dictates.
+
+**Autonomous mode:** The agent reads this ENTRYPOINT.md and follows the arc
+naturally from ORIENT through to HANDOFF/EXIT. The session state machine
+(see `system/workflows/session.md`) governs the lifecycle:
+`ORIENT -> SELECT -> EXECUTE -> HANDOFF -> EXIT`. No human intervention
+is expected or required.
+
+**Project-specific configuration** comes from `.codecraft.local.md` in the
+project root. This file uses YAML frontmatter for structured config followed
+by markdown prose for project context:
+
+```yaml
+---
+tracker: docs/engineering/tracker.md
+test_command: python3 -m pytest tests/ -x -q
+enforce_commands:
+  - ruff check apollo
+  - ruff format --check apollo
+conventions:
+  line_length: 100
+  target_python: "3.11"
+---
+
+# Project Context
+
+Additional prose context about the project, its architecture, conventions,
+and anything the agent should know when working autonomously.
+```
+
+The `/orient` skill searches for this file automatically during context
+recovery.
+
 ## The Modes (how you operate)
+
+Each mode maps to a skill that can be invoked interactively:
+
+| Mode | Skill | Workflow |
+|------|-------|----------|
+| Analysis | `/understand` | `system/workflows/analysis.md` |
+| Planning | `/design` | `system/workflows/planning.md` |
+| Construction | *(direct -- follow the build loop)* | `system/workflows/construction.md` |
+| Validation | `/verify` | `system/workflows/validation.md` |
+| Delivery | `/handoff` | `system/workflows/delivery.md` |
+
+Construction mode has no dedicated skill because it is the core build loop
+described in the construction workflow. The agent executes it directly using
+the change list produced by `/design`.
 
 ### Analysis Mode
 You're reading and comprehending. No code changes.
@@ -134,7 +189,8 @@ A specific check failed. Fix it.
 3. Make a targeted fix
 4. Re-run validation
 
-**Escalation:** If the same failure recurs 3+ times → RETHINK.
+**Escalation:** If the same failure recurs 3+ times, escalate to RETHINK.
+Repeating the same fix is not progress -- it means the approach is wrong.
 
 ### RETHINK (approach isn't working)
 Stop fixing symptoms. The approach is wrong.
@@ -144,11 +200,18 @@ Stop fixing symptoms. The approach is wrong.
 3. Choose: redesign (→ planning mode) or re-analyze (→ analysis mode)
 4. Preserve the failed attempt (don't delete — future context)
 
+**Escalation:** If the spec itself is unclear or contradictory and you cannot
+resolve the ambiguity by re-reading, flag it in a stuck note and move to the
+next eligible task. Do not burn budget trying to divine intent from an
+ambiguous spec.
+
 ### STUCK (can't make progress)
 You've rethought and still can't solve it.
 
-1. Write a stuck note explaining: what you tried, why it failed, what you think
-   the blocker is
+1. Write a stuck note explaining:
+   - What you tried (specific approaches, not vague descriptions)
+   - What failed (exact errors, test output, or logical contradictions)
+   - What you think the blocker is (missing context, spec gap, architectural constraint)
 2. Commit what you have
 3. Update tracker with notes
 4. HANDOFF to the next session
