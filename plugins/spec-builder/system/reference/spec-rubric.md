@@ -1,314 +1,463 @@
 # Spec Quality Rubric
 
-What a good specification looks like, distilled from analyzing OpenAI's Symphony
-SPEC.md (2110 lines, 18 sections, used to produce a working implementation by AI).
+How to judge whether a specification is good enough to implement from.
 
-This is calibration material. Read it when drafting or reviewing spec content.
-It tells you what "good" looks like so you can measure your output against it.
-
----
-
-## What Makes the Symphony Spec Work
-
-Symphony is a scheduler/runner for coding agents. Its spec was written so an AI
-could implement the entire service from the spec alone. That constraint forced
-precision — every ambiguity would become a bug. The spec succeeds because:
-
-1. **It specifies behavior, not implementation.** It says WHAT must happen and
-   in what order, never HOW to code it. Language-agnostic pseudocode for
-   critical algorithms. No framework choices. No data structure preferences.
-
-2. **Nothing is implicit.** Every default value is stated. Every error is named.
-   Every state transition has a trigger and a guard. If the spec doesn't say it,
-   the implementation shouldn't assume it.
-
-3. **It's self-contained.** A reader needs no external context. Every concept
-   is defined in the spec itself. Every cross-reference is by section number.
+This is calibration material — not a template. Read it to develop judgment
+about what precision means, when detail matters, and where to stop. The
+spec you're building may look nothing like the reference material below,
+and that's fine. What matters is whether an engineer could implement the
+product correctly from your spec alone.
 
 ---
 
-## Section-by-Section Rubric
+## The Single Test
 
-### 1. Problem Statement
+**Could two competent engineers, working independently, read this spec and
+produce implementations that are compatible where they need to be?**
 
-**What good looks like:**
-- One paragraph saying what the system IS
-- Bullet list of specific problems it SOLVES (not features — problems)
-- Explicit boundary: what it is NOT responsible for
-- No marketing language, no aspirational claims
+If yes, the spec is precise enough. If no, find the ambiguity and resolve it.
 
-**Symphony example (why it works):**
+Everything in this rubric serves this test. Precision isn't about volume —
+it's about eliminating the ambiguities that would cause two implementations
+to diverge.
+
+---
+
+## The Core Principles (from Symphony)
+
+OpenAI's Symphony SPEC.md was written so an AI could implement the entire
+service from the spec alone. That constraint forced a discipline worth
+learning from:
+
+**1. Specify behavior, not implementation.**
+Say WHAT must happen and in what order. Never say HOW to code it. No
+framework choices. No data structure preferences. Language-agnostic
+pseudocode for critical algorithms. The moment you specify implementation,
+you've reduced the spec's audience to one technology stack.
+
+**2. Nothing is implicit.**
+Every default value is stated. Every error is named. Every state transition
+has a trigger and a guard. If the spec doesn't say it, the implementation
+shouldn't assume it. Implicit knowledge is the #1 source of implementation
+bugs.
+
+**3. The spec is self-contained.**
+A reader needs no external context. Every concept is defined in the spec.
+Every cross-reference is by section number. If you need to have been in
+the room to understand a section, that section isn't done.
+
+---
+
+## Precision Proportional to Consequence
+
+This is the calibration principle the rubric is built on.
+
+**Not every part of a spec needs the same level of detail.** The right
+question is: "how many implementation decisions does this precision level
+disambiguate?" If a section is so vague that an implementer would make
+10 guesses, it needs more precision. If it's already unambiguous, adding
+more detail is waste.
+
+### High-consequence areas (need maximum precision):
+
+- **Domain model** — entity field types, nullability, constraints, normalization
+  rules. Two implementations must produce compatible data models or they can't
+  interoperate. Every field needs a type and every constraint needs stating.
+- **State machines** — states, transitions, triggers, guards. A missing
+  transition or ambiguous guard becomes a bug. Enumerate exhaustively.
+- **External contracts** — APIs, protocols, wire formats. Anything that crosses
+  a system boundary must be precise enough for independent implementation.
+- **Safety invariants** — security rules, data validation, access control.
+  Ambiguity here becomes a vulnerability. State as mechanical rules, not guidelines.
+- **Error handling at boundaries** — what happens when external calls fail?
+  Each failure mode needs a specified recovery behavior.
+
+### Medium-consequence areas (need clarity but less exhaustive detail):
+
+- **Configuration** — every knob the operator can turn, with type and default.
+  But you don't need to specify the config file format or parsing library.
+- **Behavior sequences** — the order of operations matters and should be stated,
+  but the exact pseudocode might not be needed if the sequence is simple.
+- **Observability** — what must be logged/measured. But not how to render dashboards.
+
+### Low-consequence areas (need direction, not exhaustive specification):
+
+- **System overview** — shape and components, not internals.
+- **Non-goals** — clear exclusions, not lengthy justifications.
+- **Implementation hints** — suggestions that help but don't constrain.
+
+### What NOT to specify:
+
+- Programming language or runtime
+- Internal data structures (specify the interface, not the implementation)
+- Specific third-party libraries (specify the capability needed)
+- UI layout details (specify the interaction flow and information architecture)
+- Performance implementation (specify the SLA, not the caching strategy)
+
+**The line:** if two different choices would both satisfy the requirement and
+the user wouldn't notice the difference, it belongs in implementation, not spec.
+
+---
+
+## Section Standards
+
+### Problem Statement
+
+**Purpose:** Orient the reader. One paragraph to understand what this is.
+
+**Must include:**
+- What the system IS (one sentence, no adjectives)
+- What problems it SOLVES (bullet list, problem-focused not feature-focused)
+- Where its responsibility ENDS (explicit boundary)
+
+**Symphony example:**
 > "Symphony is a long-running automation service that continuously reads work
 > from an issue tracker, creates an isolated workspace for each issue, and runs
 > a coding agent session for that issue inside the workspace."
 
-One sentence. Says what it does. No adjectives.
-
-> "Important boundary: Symphony is a scheduler/runner and tracker reader.
-> Ticket writes are typically performed by the coding agent."
-
-Explicit about where its responsibility ends.
+> "Important boundary: Symphony is a scheduler/runner and tracker reader."
 
 **Anti-patterns:**
-- "A next-generation platform for..." (marketing, not specification)
-- "Enables teams to..." (aspirational, not behavioral)
+- "A next-generation platform for..." (marketing)
 - Problem statement that's actually a feature list
-- No boundary statement (leaves scope ambiguous)
+- No boundary (scope is ambiguous)
 
 ---
 
-### 2. Goals and Non-Goals
+### Goals and Non-Goals
 
-**What good looks like:**
-- Goals are TESTABLE — you could write a test for each one
-- Goals use active verbs: "Poll", "Maintain", "Create", "Stop", "Recover"
-- Non-goals are SPECIFIC — not "won't do everything" but "won't do X, Y, Z"
-- Non-goals explain what you might expect but explicitly exclude
+**Purpose:** Define what success looks like and what's explicitly excluded.
 
-**Symphony example (why it works):**
-Goal: "Stop active runs when issue state changes make them ineligible."
-→ Testable: create a run, change the issue state, verify it stops.
+**Must include:**
+- Goals that are TESTABLE — you could verify each one mechanically
+- Goals using active verbs (poll, maintain, create, stop, recover)
+- Non-goals that are SPECIFIC expectations being explicitly rejected
 
-Non-goal: "Rich web UI or multi-tenant control plane."
-→ Specific expectation explicitly excluded.
-
-Non-goal: "Mandating a single default approval, sandbox, or operator-confirmation
-posture for all implementations."
-→ Addresses a reasonable assumption and explicitly rejects it.
+**Test for a good goal:** Can you write a test that passes when the goal is
+met and fails when it's not? If no, the goal is too vague.
 
 **Anti-patterns:**
-- "Be fast" (not testable — how fast? measured how?)
-- "Provide a great user experience" (subjective, not verifiable)
-- Non-goals that are just "things we haven't built yet"
+- "Be fast" (how fast? measured how?)
+- "Great user experience" (subjective)
+- Non-goals that are just "things we'll do later"
 
 ---
 
-### 3. System Overview
+### System Overview
 
-**What good looks like:**
-- Component list with 1-2 sentence descriptions each (the map)
-- Abstraction levels showing how components layer (which depends on which)
-- External dependencies listed (what's outside the system boundary)
-- A reader should understand the system's shape WITHOUT reading the details
+**Purpose:** Give the reader a map before the territory.
 
-**Symphony example (why it works):**
-8 components, each with a clear single responsibility:
-> "Orchestrator: Owns the poll tick. Owns the in-memory runtime state. Decides
-> which issues to dispatch, retry, stop, or release."
+**Must include:**
+- Component list with single-responsibility descriptions
+- How components relate (dependency direction, data flow)
+- External dependencies (what's outside the system boundary)
 
-6 abstraction levels showing the layering:
-> Policy → Configuration → Coordination → Execution → Integration → Observability
+**Test:** After reading this section, can the reader predict which section
+contains the details for any given question? If yes, the overview works.
 
-This is the table of contents for the rest of the spec. After reading Section 3,
-you know WHERE every detail will live before you read it.
+---
+
+### Domain Model
+
+**Purpose:** Define the nouns of the system precisely enough for independent
+implementation.
+
+**For each entity:**
+- Name and purpose (one sentence)
+- Fields with types, nullability, and constraints
+- Behavioral semantics where the field affects logic (not just "stores data")
+
+**For relationships:**
+- Cardinality (1:1, 1:N, N:M)
+- Lifecycle coupling (cascade-delete? orphan? prevent-delete?)
+- Direction (who owns whom)
+
+**For identifiers:**
+- How generated, how compared, normalization rules
+- Which identifiers are stable (never change) vs mutable
+
+**The precision test:** Could two implementations read this section and produce
+data models that can exchange data without loss? Every field type mismatch or
+missing constraint is a compatibility bug.
 
 **Anti-patterns:**
-- Jumping into details without the overview
-- Architecture diagram without prose explanation
-- Missing external dependencies (reader discovers them later)
-- Components described by technology instead of responsibility
+- Fields without types ("properties: various attributes")
+- Missing nullability (is this field optional or required?)
+- Entities referenced in later sections but not defined here
+- Relationships left implicit
 
 ---
 
-### 4. Core Domain Model
+### Behavior Specifications
 
-**What good looks like:**
-- Every entity has: name, purpose, fields with types and descriptions
-- Every field has constraints (nullable?, default?, valid range?)
-- Relationships between entities are explicit (not left for the reader to infer)
-- Stable identifiers and normalization rules documented
-- Entities correspond to concepts the reader already met in the overview
+**Purpose:** Define what the system does in each feature area.
 
-**Symphony example (why it works):**
-Every entity field is documented like this:
-```
-- `priority` (integer or null)
-  - Lower numbers are higher priority in dispatch sorting.
-```
-Type, nullability, AND behavioral semantics in two lines.
+**For each operation or interaction:**
+- Preconditions (what must be true before this can happen)
+- Sequence (what happens, in order)
+- Postconditions (what is guaranteed after)
+- Error conditions (what can go wrong, and what happens when it does)
 
-Normalization rules are explicit:
-> "Workspace Key: Derive from issue.identifier by replacing any character not
-> in [A-Za-z0-9._-] with _."
+**For state machines:**
+- All states listed (including terminal states)
+- All transitions with: trigger, guard condition, effect
+- Verification: every state is reachable, every non-terminal state has an exit
+- No "the system may be in other states" — enumerate exhaustively
 
-No ambiguity about how identifiers are formed.
+**For configuration in this area:**
+- Every option with: type, default value, validation rules
+- What happens when the option changes at runtime (restart required? live reload?)
 
-**The precision test:** Could two independent implementations read this section
-and produce compatible data models? If yes, the domain model is precise enough.
-
-**Anti-patterns:**
-- Entity with fields but no types
-- Fields without nullability specified
-- "Properties: various attributes" (not a specification)
-- Missing normalization rules (how are IDs generated? compared? stored?)
-- Entities referenced later that aren't defined here
-
----
-
-### 5-N. Feature/Behavior Specifications
-
-**What good looks like:**
-- Each feature section follows a consistent internal structure
-- Behavior specified as sequences: "first X, then Y, then Z"
-- Preconditions stated: "this only happens when A is true"
-- Error conditions for each operation: "if X fails, then Y"
-- Configuration options with types, defaults, and validation rules
-- State machines with states, transitions, triggers, and guards
-- Cross-references to domain model entities by section number
-
-**Symphony example (why it works):**
-The Orchestration section (Section 7) defines a state machine:
-```
-1. Unclaimed — not running, no retry scheduled
-2. Claimed — reserved to prevent duplicate dispatch
-3. Running — worker task exists
-4. RetryQueued — retry timer exists
-5. Released — claim removed
-```
-Then every transition between these states is documented with its trigger.
-
-The Workspace section (Section 9) has safety invariants:
-> "Invariant 1: Run the coding agent only in the per-issue workspace path."
-> "Invariant 2: Workspace path must stay inside workspace root."
-
-These are testable, mechanical rules — not guidelines.
+**The sequence test:** Could an implementer trace through a scenario step-by-step
+using only this section? If they'd need to guess any step, add it.
 
 **Anti-patterns:**
 - "The system handles errors gracefully" (not a specification)
-- Behavior described without sequence ("it does A, B, and C" — in what order?)
-- Missing error paths (only the happy path is specified)
-- Configuration options without defaults
-- State machines without transition triggers
+- Behavior without sequence ("it does A, B, and C" — in what order?)
+- Happy path only (no error paths)
+- State machines with unlabeled transitions
 
 ---
 
-### 6. Cross-Cutting Concerns
+### Cross-Cutting Concerns
 
-**What good looks like:**
-- Security: trust boundaries stated, filesystem safety invariants, secret handling
-- Observability: required log fields, structured format, what operators must see
-- Configuration: source precedence, dynamic reload semantics, validation rules
-- Error handling philosophy: error classes enumerated, recovery behavior per class
+**Purpose:** Address things that span multiple features.
 
-**Symphony example (why it works):**
-Error handling isn't vague — it's a taxonomy:
-```
-1. Workflow/Config Failures (missing file, invalid YAML, missing credentials)
-2. Workspace Failures (creation, population, hooks)
-3. Agent Session Failures (handshake, turn, timeout, stall)
-4. Tracker Failures (transport, status, GraphQL, payload)
-5. Observability Failures (snapshot, dashboard, log sink)
-```
-Each class has a specific recovery behavior. Nothing is "handle appropriately."
+**Error handling:** Don't say "errors are handled." Enumerate error CLASSES
+and specify recovery behavior for each class. Symphony has 5 error categories,
+each with specific recovery rules.
 
-**Anti-patterns:**
-- "The system should be secure" (not actionable)
-- "Errors are logged" (which errors? what format? where?)
-- No dynamic reload semantics (does the system need restarting to apply changes?)
+**Security:** State trust boundaries, safety invariants (as mechanical rules),
+and secret handling. Not "be secure" but "workspace path must stay inside
+workspace root."
+
+**Observability:** What must be logged, with what fields. Not how to build
+dashboards.
+
+**Configuration management:** Source precedence, reload semantics, validation.
 
 ---
 
-### 7. Test Matrix
+### Test Matrix
 
-**What good looks like:**
-- Every behavioral requirement from the spec has a corresponding test bullet
-- Tests organized by subsystem (matching spec sections)
-- Test profiles: core (required), extension (if feature shipped), integration (env-dependent)
-- Each test bullet is specific enough to implement without reading the spec again
+**Purpose:** Every behavioral requirement should be testable, and this section
+proves it.
 
-**Symphony example (why it works):**
-Section 17 has 80+ specific test bullets, organized by subsystem:
-> "Dispatch sort order is priority then oldest creation time"
-> "Todo issue with non-terminal blockers is not eligible"
-> "Normal worker exit schedules a short continuation retry (attempt 1)"
+**For each requirement in the spec:**
+- One test bullet stating the scenario and expected outcome
+- Organized by subsystem (matching spec sections)
 
-Each bullet is ONE testable assertion. Not "test the dispatch logic" but
-a specific scenario with expected outcome.
+**Profile classification:**
+- Core: required for any conforming implementation
+- Extension: required only if that feature is shipped
+- Integration: requires real external dependencies
+
+**The test:** Every SHALL/MUST statement in the spec has a corresponding
+bullet here. If a requirement has no test, it's either untestable (rewrite it)
+or the test is missing (add it).
 
 **Anti-patterns:**
 - "Tests should cover all functionality" (not a matrix)
-- Test descriptions that restate the spec without adding scenarios
-- Missing negative tests (what should NOT happen)
-- No distinction between required and optional tests
+- Test descriptions that just restate requirements without adding scenarios
+- Missing negative tests ("this should NOT happen when...")
 
 ---
 
-### 8. Implementation Checklist
+### Implementation Checklist
 
-**What good looks like:**
-- Ordered by dependency (what must exist before what)
-- References spec sections for each item
-- Distinguishes required vs recommended
-- Acts as a "definition of done" — when all items checked, the system is complete
+**Purpose:** Ordered definition of done.
 
-**Symphony example (why it works):**
-Section 18 mirrors Section 17 exactly: each required behavior is a checklist item.
-It adds extension items marked as "recommended" and operational validation.
-
-**Anti-patterns:**
-- Unordered list (no dependency information)
-- Items too vague to verify ("implement the API")
-- Missing reference to spec sections (where's the detail?)
+**Must include:**
+- Items ordered by dependency (what must exist before what)
+- Each item references a spec section
+- Required items separated from recommended items
+- Granularity: each item is independently verifiable
 
 ---
 
-### Reference Algorithms
+### Reference Algorithms (when needed)
 
-**What good looks like:**
-- Language-agnostic pseudocode for critical paths
-- Not prescribing data structures — prescribing behavior sequences
-- Error handling inline (not deferred to "see error handling section")
-- Each algorithm is self-contained and readable without surrounding context
+**Include these when:** The behavioral sequence is complex enough that prose
+description alone would be ambiguous. If the sequence has conditional branches,
+loops, or error recovery, pseudocode clarifies better than prose.
 
-**Symphony example (why it works):**
-Section 16 has 6 reference algorithms: startup, tick, reconciliation, dispatch,
-worker attempt, worker exit. Each one is ~20-30 lines of pseudocode that
-specifies the exact behavioral sequence.
+**Don't include these when:** The behavior is simple and the prose specification
+is unambiguous. Not every operation needs pseudocode.
 
-**Anti-patterns:**
-- Pseudocode that's actually Python/Java/etc. (language-specific)
-- Algorithms that skip error handling
-- Missing algorithms for critical paths (reader must infer the sequence)
+**Properties of good pseudocode:**
+- Language-agnostic (no language-specific syntax)
+- Error handling inline (not deferred)
+- Self-contained (readable without other sections)
+- Specifies behavior sequence, not data structures
+
+---
+
+## Iterative Quality: v0.1 Is Not v1.0
+
+A spec evolves through drafts. Don't aim for Symphony quality on the first pass.
+
+### v0.1 — Structural Draft
+- Problem statement exists and is honest
+- Major entities identified with rough descriptions
+- Feature areas listed with behavioral summaries
+- State machines sketched (states and major transitions)
+- Obvious non-goals stated
+- `[TBD]` markers where detail is needed
+
+### v0.5 — Working Draft
+- All entities have typed fields
+- State machines are complete (all transitions, triggers, guards)
+- Behavior sequences specified for major operations
+- Error handling enumerated for boundary interactions
+- Configuration options listed with defaults
+- Cross-references working between sections
+- Test bullets exist for critical paths
+
+### v1.0 — Implementation-Ready
+- Every section passes the "two independent implementations" test
+- Every `[TBD]` resolved or explicitly deferred with rationale
+- Test matrix complete (every SHALL/MUST has a test)
+- Implementation checklist ordered by dependency
+- Reference algorithms for complex sequences
+- Self-contained: no external context needed
+
+**The agent should know which version it's producing** and calibrate detail
+accordingly. Asking v0.1-level questions ("what entities exist?") while
+writing v1.0-level prose is a mismatch.
+
+---
+
+## Section Dependency DAG
+
+Sections aren't independent. They form a dependency graph:
+
+```
+Problem Statement
+  └→ Goals / Non-Goals
+       └→ System Overview
+            └→ Domain Model ←──────────────────┐
+                 ├→ Behavior Specifications ────┤
+                 │    └→ Cross-Cutting Concerns  │
+                 │         └→ Test Matrix ───────┘
+                 │              └→ Implementation Checklist
+                 └→ Reference Algorithms (draws from Behavior + Domain Model)
+```
+
+**What this means:**
+- The domain model CONSTRAINS the behavior specs (you can't specify operations
+  on entities that don't exist in the model)
+- The behavior specs GENERATE the test matrix (every behavioral requirement
+  becomes a test bullet)
+- The test matrix VALIDATES the behavior specs (if you can't test it, it's
+  either too vague or not a real requirement)
+- The implementation checklist SEQUENCES from all of the above
+
+**Don't write sections out of dependency order.** You can sketch later sections
+early, but don't finalize a behavior spec before the domain model is solid —
+you'll be editing it when the model changes.
+
+---
+
+## Adapting to Different Product Types
+
+Not every product is a backend daemon like Symphony. Adjust emphasis:
+
+### API / Platform
+- Domain model and external contracts need maximum precision
+- Version strategy and backward compatibility become critical sections
+- Security (auth, rate limiting, data access) gets its own detailed section
+- Error responses need schema-level precision (every error code, every field)
+
+### CLI Tool
+- Simpler domain model, fewer entities
+- Command structure and flag semantics need precision
+- Input/output formats specified exhaustively
+- State machines may not apply (most CLIs are stateless)
+- Exit codes and error messages become the "external contract"
+
+### Data Pipeline
+- Schema definitions need field-level precision
+- Transformation semantics (what changes, what's preserved)
+- Lineage and provenance (where does data come from, where does it go)
+- Failure and retry semantics for each stage
+- State machines for pipeline stage lifecycle
+
+### UI-Heavy Product
+- Interaction flows need step-by-step sequences
+- Information architecture (what the user sees, in what order)
+- State machines for UI state (loading, error, empty, populated)
+- Accessibility requirements as testable statements
+- Less emphasis on wire protocols, more on user-facing behavior
+
+### Real-Time / Event-Driven
+- Event schemas need field-level precision
+- Ordering guarantees (exactly-once? at-least-once? ordering?)
+- Latency requirements as quantified SLAs
+- Backpressure and flow control behavior
+- Failure modes for producers and consumers independently
+
+**The principle:** precision goes where divergence would be visible to users
+or operators. For an API, that's the contract. For a CLI, that's the command
+interface. For a pipeline, that's the schema. Identify YOUR product's equivalent
+and specify it to Symphony-level precision. Everything else can be lighter.
 
 ---
 
 ## The Calibration Questions
 
-When reviewing a spec section, ask:
+### Per-section:
+1. Could two engineers implement this independently with compatible results?
+2. Could you write a test for every behavioral statement?
+3. Is every default, constraint, and error path stated?
+4. Can a reader understand this without reading other sections?
+5. Is this describing WHAT (behavior) or HOW (implementation)?
 
-1. **Could two people implement this independently and get compatible results?**
-   If no → the spec is ambiguous. Find the ambiguity and resolve it.
+### Per-entity:
+1. Are all fields typed with nullability stated?
+2. Are normalization rules explicit?
+3. Is the lifecycle clear (created when? destroyed when?)
+4. Are relationships to other entities documented?
 
-2. **Could you write a test for every behavioral statement?**
-   If no → the statement is too vague. Make it testable.
+### Per-operation:
+1. Are preconditions stated?
+2. Is the sequence of steps specified?
+3. Are error conditions enumerated with recovery behavior?
+4. Are postconditions (what's guaranteed after) stated?
 
-3. **Is every default value, constraint, and error path stated?**
-   If no → something is implicit. Make it explicit.
+### Per-state-machine:
+1. Are all states listed, including terminal states?
+2. Does every transition have a trigger and guard?
+3. Is every state reachable from the initial state?
+4. Can every non-terminal state be exited?
 
-4. **Can a reader understand this section without reading any other section?**
-   If no → add cross-references or inline the needed context.
-
-5. **Is this describing WHAT the system does, or HOW it's built?**
-   If how → rewrite to describe behavior, not implementation.
+### Per-configuration-option:
+1. Type, default value, and validation rules stated?
+2. Behavior on change specified (restart required? live reload?)
+3. Environment variable or override mechanism documented?
 
 ---
 
-## Spec Sizing Guide
+## What Symphony Does NOT Specify (Equally Important)
 
-Based on Symphony (a moderately complex service):
+Symphony deliberately leaves these to the implementer:
+- Programming language and runtime
+- Database or persistence technology
+- Internal data structures
+- Web framework for the optional HTTP server
+- Logging library or format beyond required fields
+- Test framework or runner
+- CI/CD pipeline
+- Deployment method
 
-| Aspect | Symphony | Guideline |
-|--------|----------|-----------|
-| Total length | 2110 lines | Scale with complexity. 500-3000 lines typical. |
-| Sections | 18 | 8-20 depending on feature count |
-| Entities | 8 | 1 per core domain concept |
-| State machines | 2 (orchestration + run attempt) | 1 per stateful entity |
-| Config fields | ~25 | Every knob the operator can turn |
-| Error classes | 5 categories, ~20 specific | Enumerate, don't generalize |
-| Test bullets | ~80 | 1 per behavioral requirement |
-| Reference algorithms | 6 | 1 per critical path |
-| Checklist items | ~30 | Maps 1:1 to test matrix |
+Each of these is a decision the spec COULD have made but chose not to —
+because any reasonable choice would satisfy the behavioral requirements.
+If the spec specified "use PostgreSQL," it would exclude equally valid
+implementations using SQLite or in-memory state.
 
-A spec that's 200 lines is almost certainly too shallow.
-A spec that's 5000 lines might be over-specified or need splitting.
-The right length is: every behavioral requirement is stated, no more.
+**Your spec should do the same.** When you're tempted to specify an
+implementation choice, ask: "would a different choice still satisfy the
+behavioral requirements?" If yes, leave it out. You're over-specifying.
+
+The only exception: when the human has explicitly stated a technology
+constraint ("we're building this in Python" or "it must use PostgreSQL").
+Then it's a requirement, not an implementation choice, and belongs in the spec.
