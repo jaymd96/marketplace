@@ -52,6 +52,8 @@ For any library below, read the full reference: `references/<name>.md`
 | Library | Version | Use For |
 |---------|---------|---------|
 | httpx | 0.28.1 | Modern HTTP client (sync + async, connection pooling) |
+| websockets | 14.1+ | WebSocket client and server |
+| grpcio | 1.68+ | gRPC client and server |
 
 ### Observability
 | Library | Version | Use For |
@@ -90,16 +92,28 @@ For any library below, read the full reference: `references/<name>.md`
 |---------|---------|---------|
 | tenacity | 9.0+ | Retry logic with backoff |
 | dynaconf | 3.2+ | Layered configuration management |
+| python-dotenv | 1.0+ | Load .env files for local dev |
+| cachetools | 5.5+ | In-memory caches (TTL, LRU, LFU) |
+| limits | 3.13+ | Rate limiting strategies |
 
 ### Database
 | Library | Version | Use For |
 |---------|---------|---------|
 | sqlalchemy | 2.0.40 | ORM and SQL toolkit |
+| alembic | 1.14+ | Database migrations (for SQLAlchemy) |
+| redis | 5.2+ | Distributed cache, pub/sub, rate limiting |
 
-### Security
+### Security & Auth
 | Library | Version | Use For |
 |---------|---------|---------|
 | casbin | 1.36+ | Policy-based authorization (RBAC, ABAC) |
+| pyjwt | 2.9+ | JWT token creation and verification |
+| cryptography | 44.0+ | Encryption, signing, certificates |
+
+### Background Jobs
+| Library | Version | Use For |
+|---------|---------|---------|
+| dramatiq | 1.17+ | Background task queue (Redis/RabbitMQ) |
 
 ### Parsing & Templating
 | Library | Version | Use For |
@@ -107,12 +121,37 @@ For any library below, read the full reference: `references/<name>.md`
 | lark | 1.2+ | Grammar-based parsing (DSLs) |
 | jinja2 | 3.1+ | Template engine |
 | rule-engine | 4.5+ | Safe business rule evaluation |
+| markdown-it-py | 3.0+ | Markdown parsing and rendering |
+| protobuf | 5.29+ | Protocol Buffers serialization |
 
-### Data Structures
+### Data Structures & Processing
 | Library | Version | Use For |
 |---------|---------|---------|
 | networkx | 3.4+ | Graph and network analysis |
 | semantic-version | 2.10+ | SemVer parsing and comparison |
+| polars | 1.14+ | Fast DataFrames (modern pandas alternative) |
+| zstandard | 0.23+ | Fast compression (Zstandard algorithm) |
+
+### Task Execution & DevOps
+| Library | Version | Use For |
+|---------|---------|---------|
+| fabric | 3.2+ | Remote execution over SSH |
+| invoke | 2.2+ | Local task runner |
+| docker | 7.1+ | Docker client (build, run, manage) |
+| kubernetes | 31.0+ | Kubernetes API client |
+| gitpython | 3.1+ | Programmatic git operations |
+| watchdog | 6.0+ | File system event monitoring |
+| boto3 | 1.35+ | AWS SDK (S3, SQS, DynamoDB, etc.) |
+
+### GraphQL
+| Library | Version | Use For |
+|---------|---------|---------|
+| strawberry | 0.254+ | GraphQL server (type-safe, Python-first) |
+
+### Async
+| Library | Version | Use For |
+|---------|---------|---------|
+| anyio | 4.7+ | Async abstraction (structured concurrency) |
 
 ### Build & Tooling
 | Tool | Version | Use For |
@@ -122,6 +161,20 @@ For any library below, read the full reference: `references/<name>.md`
 | mypy | 1.13+ | Static type checking (strict mode) |
 | pytest | 8.3+ | Testing framework |
 | hatch | 1.13+ | Build system (pyproject.toml) |
+
+### Testing Utilities
+| Library | Version | Use For |
+|---------|---------|---------|
+| respx | 0.22+ | Mock httpx calls in tests |
+| time-machine | 2.16+ | Freeze/travel time in tests |
+| hypothesis | 6.115+ | Property-based testing |
+| faker | 33.0+ | Fake data generation for tests |
+
+### Profiling & Debugging
+| Tool | Version | Use For |
+|------|---------|---------|
+| py-spy | 0.4+ | Sampling CPU profiler (attach to running process) |
+| memray | 1.14+ | Memory allocation profiler |
 
 ## Constraints
 
