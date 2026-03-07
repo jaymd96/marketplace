@@ -1,14 +1,11 @@
 ---
 name: verify
-description: "Run the full three-pass quality gate after implementation is complete. Use after all planned units are built and individually checked."
+description: "Run the full four-pass quality gate: correctness, compliance, review, and governance audit on new code. Use after all planned units are built and individually checked."
 ---
 
 # verify
 
-This skill implements **Validation Mode** (see `system/workflows/validation.md`).
-
-Three-pass quality gate. All passes must succeed before the task can ship.
-Use the verifier subagent if available; otherwise run directly.
+Four-pass quality gate. All passes must succeed before the task can ship.
 
 ## Pass 1 — Correctness
 
@@ -18,13 +15,16 @@ Run the project's test command from `.codecraft.local.md`. Default:
 python3 -m pytest tests/ -x -q
 ```
 
+Use the `codecraft:verifier` agent to keep verbose output out of the main
+conversation.
+
 **Gate:** All tests pass. Zero failures, zero errors.
 
 If any test fails, stop. Do not proceed to Pass 2. Identify the failure:
-- Is it a test you wrote? Fix the test or the implementation.
-- Is it a pre-existing failure? Verify it fails on main too. If so, note
-  it and continue. If not, your change broke it — fix it.
-- Is it flaky? Run it again. If it passes on retry, note it but proceed.
+- Test you wrote? Fix the test or the implementation.
+- Pre-existing failure? Verify it fails on main too (`git stash`, test, `git stash pop`).
+- Flaky? Run again. Note if it passes on retry.
+- Complex failure? Use the `codecraft:diagnoser` agent for root cause analysis.
 
 ## Pass 2 — Compliance
 
@@ -35,42 +35,55 @@ ruff check .
 ruff format --check .
 ```
 
-Run any ratchet scripts defined in `ratchet_scripts` config.
+**Gate:** No new violations in files you touched. Existing baselines are
+acceptable.
 
-**Gate:** No new violations. Existing baselines are acceptable — you are not
-responsible for pre-existing lint debt unless the spec says otherwise.
+## Pass 3 — Quality (parallel review)
 
-If violations exist in files you touched, fix them. If violations are in
-files you didn't touch, ignore them.
+Launch **3 parallel reviewer agents** (`codecraft:reviewer`), each examining
+a different dimension:
 
-## Pass 3 — Quality (self-review)
+- **Reviewer 1 — Spec compliance:** Every requirement implemented? No scope
+  creep? Nothing missed?
+- **Reviewer 2 — Codebase conventions:** Patterns match? Naming consistent?
+  Imports organized the same way?
+- **Reviewer 3 — Code quality + tests:** No dead code? No debug artifacts?
+  Error handling correct? Tests cover behavior and edge cases?
 
-Read the complete diff:
-```
-git diff
-```
-Or if changes are staged: `git diff --cached`
+Reviewers use **>=80% confidence threshold** — only issues they're confident
+about make the report. This eliminates nitpicks and false positives.
 
-Check against each criterion:
+Consolidate findings by severity:
+- **Critical (>=95% confidence):** Must fix before shipping
+- **Important (80-94% confidence):** Should fix, discuss if disagreement
 
-- **Spec match:** Does the implementation satisfy every requirement in the spec?
-  Walk through acceptance criteria one by one.
-- **Scope creep:** Any changes beyond what was planned in /design? If so,
-  revert them or justify why they're necessary.
-- **Debug artifacts:** Remove print statements, commented-out code, TODO
-  placeholders that should be real code, hardcoded test values.
-- **Dead code:** Functions or imports added but never used.
-- **Naming consistency:** Do new names follow existing codebase conventions?
-  Check against patterns identified in /understand.
-- **Reviewer test:** Would a competent reviewer approve this diff? If you
-  hesitate, identify why.
+**Gate:** No critical issues. Important issues resolved or justified.
 
-**Gate:** All criteria satisfied. No issues found, or all issues resolved.
+## Pass 4 — Governance (audit new code)
+
+Run **3 parallel auditor agents** (`codecraft:auditor`) scoped to **only the
+files you created or modified** (use `git diff --name-only` to get the list).
+
+- **Auditor 1 — Group A (Architecture):** Check new code for pure imports,
+  boundary violations, ad-hoc globals, side effects in wrong layers.
+- **Auditor 2 — Group B (Type Safety):** Check new code for missing type
+  annotations, mutable data where frozen is appropriate, bare exception catches.
+- **Auditor 3 — Group C (Tooling):** Check new tests are properly layered,
+  no dynamic magic introduced, dependencies properly specified.
+
+Scope the audit to changed files: "Audit only these files against Group X
+rules: [file list]. Report violations in the new code, not pre-existing issues."
+
+**Gate:** No violations in new code. New code must not introduce governance
+debt — it should follow the 12 rules even if the rest of the codebase doesn't.
+
+Pre-existing violations in untouched files are not your responsibility.
+Violations in files you modified but didn't introduce are noted but non-blocking.
 
 ## After Verification
 
-- **All 3 passes succeeded:** Proceed to /handoff for delivery.
-- **Any pass failed:** Return to construction mode. Make a targeted fix for
-  the specific failure. Then re-run /verify from Pass 1 (not just the
-  failing pass — a fix can introduce regressions).
+- **All 4 passes succeeded:** Proceed to /handoff for delivery.
+- **Any pass failed:** Return to construction. Make a targeted fix for the
+  specific failure. Then re-run /verify from Pass 1 (a fix can introduce
+  regressions).
 - **Same failure 3+ times:** Escalate to /rethink. The approach is wrong.

@@ -1,14 +1,13 @@
 ---
 name: understand
-description: "Deep-read a spec and all code it references. Build a mental model before designing. Use before /design, when starting a new task, or when the spec references unfamiliar code."
+description: "Deep-read a spec and all code it references using parallel explorer agents. Build a mental model before designing. Use before /design, when starting a new task, or when the spec references unfamiliar code."
 ---
 
 # understand
 
-This skill implements **Analysis Mode** (see `system/workflows/analysis.md`).
-
-Read everything relevant to the task. No code changes in this phase — only
-comprehension. The goal is to answer four questions before proceeding.
+Read everything relevant to the task using **parallel exploration agents**.
+No code changes in this phase — only comprehension. The goal is to answer
+four questions before proceeding.
 
 ## Steps
 
@@ -18,30 +17,33 @@ comprehension. The goal is to answer four questions before proceeding.
    - Edge cases mentioned
    - Non-functional requirements (performance, compatibility)
 
-2. **Read every affected module.** For each file the spec mentions or that
-   will need modification:
-   - Read the full file, not just the function
-   - Understand the module's role in the broader system
-   - Note imports, dependencies, and callers
+2. **Launch 2-3 parallel explorer agents.** Each investigates a different
+   aspect of the codebase simultaneously:
 
-3. **Read existing tests.** For every module that will change:
-   - Read the corresponding test file
-   - Understand what's already tested
-   - Identify test patterns used (fixtures, factories, markers)
-   - Note any test infrastructure you'll need to use
+   - **Explorer 1 — Feature trace:** Trace similar features or the code
+     paths that will be affected. Find entry points, execution flows,
+     data transformations. Use the `codecraft:explorer` agent.
 
-4. **Identify codebase patterns.** Look at how similar things are done:
-   - Naming conventions (variables, classes, files)
-   - Error handling patterns
-   - Logging patterns
-   - Import organization
-   - Dataclass vs dict vs Pydantic usage
+   - **Explorer 2 — Test & convention scan:** Read existing tests for
+     affected areas. Identify fixtures, factories, naming patterns, error
+     handling conventions, import organization. Use the `codecraft:explorer`
+     agent.
 
-5. **Surface risks and unknowns.** Write down:
-   - Things you don't understand yet
-   - Areas where the spec is ambiguous
-   - Potential conflicts with existing code
-   - Performance or compatibility concerns
+   - **Explorer 3 — Dependency mapping** (if the feature touches multiple
+     modules): Map imports, interfaces, and integration points that new
+     code must respect. Use the `codecraft:explorer` agent.
+
+3. **Synthesize exploration results.** After all agents return, combine
+   their findings into a unified analysis:
+   - Key files (5-10 most relevant, with why each matters)
+   - Patterns to follow (naming, structure, error handling)
+   - Existing test infrastructure
+   - Risks and unknowns
+
+4. **Surface gaps.** Identify:
+   - Things the explorers didn't find answers to
+   - Spec ambiguities that exploration didn't resolve
+   - Potential conflicts between existing code and spec requirements
 
 ## Exit Guard
 
@@ -54,6 +56,5 @@ You cannot proceed to /design until you can answer all four:
 4. **What tests exist?** — Which test files cover the affected code, what
    patterns they use, what fixtures are available.
 
-If you can't answer one of these, keep reading. If you've read everything
-available and still can't answer, note it as a risk and proceed with the
-gap explicitly documented.
+If you can't answer one of these after exploration, note it as a risk and
+proceed with the gap explicitly documented.

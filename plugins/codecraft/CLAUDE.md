@@ -6,96 +6,98 @@ verification-gated, state machine-driven development.
 **Where spec-builder turns conversation into specs, codecraft turns specs
 into code.** They're two halves of the same pipeline.
 
-## Operating Model: Three Nested State Machines
+## Quick Start
 
-This plugin embodies a development methodology — not a checklist.
+**`/codecraft [task description or ID]`** — Full-lifecycle command that orchestrates
+everything: explore codebase with parallel agents, design with architectural
+alternatives, build incrementally, verify with confidence-scored reviewers, and ship.
 
-### Level 1: Session (manages budget, task selection, handoff)
+For manual control, use individual skills in order:
+`/orient` → `/select` → `/understand` → `/design` → (build) → `/verify` → `/handoff`
+
+## Operating Model
+
+### The Arc
+
+Every task follows a natural progression with gates between phases:
+
 ```
-ORIENT → SELECT → EXECUTE → HANDOFF → EXIT
+Orient → Explore → Design → Build → Verify → Ship
+           ↑                   ↑         │
+           └─── RETHINK ◄──── └── REFINE ┘
 ```
 
-### Level 2: Task (manages approach, iteration, shipping)
-```
-UNDERSTAND → DESIGN → BUILD → VERIFY → SHIP
-                ▲                 │
-                └── RETHINK ◄─ REFINE
-```
+**The /codecraft command runs this entire arc** with explicit user confirmation
+at key decision points. Individual skills let you run any phase manually.
 
-### Level 3: Build Unit (manages each individual change)
+### The Build Loop
+
+Construction is the inner loop — one unit at a time with verification:
+
 ```
 READ → CHANGE → CHECK → next unit
   ↑              │
-  └── FIX ◄──────┘
+  └── FIX ◄──────┘ (3 failures → RETHINK)
 ```
 
-Every state has **entry guards** (conditions to enter) and **exit guards**
-(conditions to leave). You iterate until guards are met, never skip states,
-and escalate when stuck.
+### Recovery Paths
 
-## When to Use These Skills
+- **REFINE:** Verification failed. Targeted fix, then re-verify all passes.
+- **RETHINK:** Same failure 3+ times. Stop fixing symptoms, diagnose the
+  approach, redesign or re-explore.
+- **STUCK:** Rethinking didn't help. Write stuck note, commit what you have,
+  handoff to next session.
 
-### Session lifecycle
-- **/orient** — Start of any session. Read tracker, understand context, identify
-  what to work on. Use FIRST before any other skill.
-- **/select** — Pick a task from the tracker. Validates dependencies, creates lock,
-  reads the spec. Use after orient.
-- **/handoff** — End of session or task. Commits, updates tracker, writes progress.
-  Use when done or when budget is running low.
+## Skills
 
-### Task execution
-- **/understand** — Deep-read a spec and the code it references. Produces a
-  structured understanding document. Use before designing a solution.
-- **/design** — Plan changes before writing code. Produces an ordered change list
-  with verification strategy. Use after understand, before any implementation.
-- **/verify** — Run the full three-pass quality gate (correctness, compliance,
-  quality). Use after build is complete.
+| Skill | Phase | Purpose |
+|-------|-------|---------|
+| `/orient` | Session start | Read tracker, recover context, identify next work |
+| `/select` | Task claim | Pick task, create lock, read spec |
+| `/understand` | Exploration | **Parallel explorer agents** trace code paths, map patterns |
+| `/design` | Architecture | **Parallel architect agents** propose alternatives, user picks |
+| `/verify` | Validation | 4-pass gate: correctness, compliance, review, **governance audit on new code** |
+| `/handoff` | Delivery | Commit, update tracker, clean up |
+| `/rethink` | Recovery | Diagnose failing approach, propose alternative |
+| `/audit` | Health check | **Parallel auditor agents** score codebase against 12 governance rules |
+| `/status` | Diagnostic | Quick state snapshot (no changes) |
 
-### Recovery
-- **/rethink** — Step back from a failing approach. Diagnose why it failed,
-  propose an alternative. Use when REFINE has looped 3+ times.
-- **/status** — Quick snapshot of current state: which state machine you're in,
-  what's done, what's next, budget remaining.
+## Agents
 
-## Key Principles
+| Agent | Purpose | Model |
+|-------|---------|-------|
+| **explorer** | Trace execution paths, map architecture, extract patterns | sonnet |
+| **architect** | Design implementation blueprints with specific files and sequences | opus |
+| **auditor** | Score codebase against 12 governance rules (3 parallel groups) | opus |
+| **reviewer** | Confidence-scored code review (>=80% threshold, no nitpicks) | opus |
+| **verifier** | Run correctness + compliance passes in isolated context | sonnet |
+| **diagnoser** | Root cause analysis for test failures | sonnet |
 
-1. **Never one-shot.** Build one unit, check it, build the next. The BUILD state
-   machine enforces this — READ → CHANGE → CHECK for each unit.
-
-2. **Verify before shipping.** Three passes: correctness (tests), compliance
-   (ratchets), quality (self-review). All three must pass.
-
-3. **Escalate, don't thrash.** If the same issue fails → gets fixed → fails again
-   3 times, stop fixing and RETHINK the approach.
-
-4. **Budget awareness is constant.** Every state checks remaining budget and
-   adjusts behavior: full iteration (>70%), wind down (30-70%), emergency
-   handoff (<30%).
-
-5. **Design before build.** The DESIGN state produces a concrete change list. You
-   can't enter BUILD without one. This prevents "let me just start coding."
-
-6. **The state machine is the methodology.** It's not a suggestion — it's the
-   operating model. Skip a state and you'll pay for it later.
-
-## Subagents
-
-- **verifier** — Runs all three verification passes in isolated context. Keeps
-  verbose linter/test output out of the main conversation.
-- **reviewer** — Self-reviews the diff against the spec and codebase conventions.
-  Catches scope creep, dead code, and naming inconsistencies.
-- **diagnoser** — When tests fail, analyzes the failure in isolation. Returns
-  root cause and suggested fix, not raw stack traces.
+Agents are designed for **parallel execution**: /understand launches 2-3
+explorers simultaneously, /design launches 2-3 architects with different
+approaches, /verify launches 3 reviewers examining different dimensions.
 
 ## Hooks
 
 - **PostToolUse (Edit/Write)** — Auto-formats Python files with ruff after every edit.
-- **PreToolUse (Bash: git commit)** — Runs quick enforcement checks before any commit.
+- **PreToolUse (Bash)** — Guards git commits: checks validation passed, specific
+  files staged, commit message references task ID.
+
+## Key Principles
+
+1. **Never one-shot.** Build one unit, check it, build the next.
+2. **Explore before designing.** Parallel agents trace the codebase first.
+3. **Present alternatives.** Architect agents propose different approaches.
+4. **Verify with confidence.** Only surface review issues >=80% confidence.
+5. **Audit every change.** New code is checked against 12 governance rules in Pass 4.
+6. **Escalate, don't thrash.** 3 failures on same issue → RETHINK.
+7. **Budget awareness.** Behavior changes at 70%, 30%, and 10% thresholds.
+8. **Design before build.** Can't enter BUILD without a change plan.
+9. **User gates.** Confirm scope, approve architecture, review findings.
 
 ## Project Configuration
 
-The plugin reads a `.codecraft.local.md` file (if present) for project-specific
-configuration:
+The plugin reads `.codecraft.local.md` (if present) for project-specific config:
 
 ```yaml
 ---
@@ -109,26 +111,20 @@ stuck_notes_dir: stuck_notes
 conventions:
   line_length: 100
   python_target: "3.11+"
-  id_type: RID
 ---
 
 ## Project Context
 
-- Hub/Spoke architecture. Hub is FastAPI, Spoke is Burr.
-- Always use RIDs, never integer IDs.
-- State machines via `transitions` library.
+Additional prose context about the project architecture and conventions.
 ```
-
-All fields are optional. If `lock_dir` or `stuck_notes_dir` are omitted,
-codecraft defaults to `current_tasks/` and `stuck_notes/` in the project root.
 
 ## Relationship to Other Plugins
 
-| Plugin | Level | What it does | How codecraft relates |
-|--------|-------|-------------|----------------------|
-| spec-builder | Process | Conversation → specs | codecraft consumes specs |
-| pytest-testing | Tool | Write/run tests | codecraft invokes in VERIFY |
-| python-toolkit | Tool | Coding standards + libs | codecraft follows its rules |
+| Plugin | Role | How codecraft relates |
+|--------|------|----------------------|
+| spec-builder | Conversation → specs | codecraft consumes specs |
+| pytest-testing | Write/run tests | codecraft invokes in VERIFY |
+| python-toolkit | Coding standards + libs | codecraft follows its rules |
 
 codecraft is the **orchestrator** — it knows _when_ to test, _when_ to lint,
 _when_ to review. The tool-level plugins know _how_.

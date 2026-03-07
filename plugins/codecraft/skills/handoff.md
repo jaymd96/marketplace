@@ -5,7 +5,7 @@ description: "End of session or task. Commits work, updates tracker, writes prog
 
 # handoff
 
-This skill implements **Delivery Mode** (see `system/workflows/delivery.md`).
+Package completed work for delivery or continuation.
 
 Package completed work for delivery or continuation. Handles both successful
 completion and partial-progress handoff.
