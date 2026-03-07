@@ -3,6 +3,10 @@
 You're checking for consistency, correctness, and completeness. Something
 might be wrong, and you need to surface it.
 
+**When reviewing spec quality, use `system/reference/spec-rubric.md` as your
+calibration standard.** It defines what each spec section should contain and
+provides the 5 calibration questions to assess any section against.
+
 ## When to Adopt
 
 - You notice a contradiction between what the human just said and earlier input

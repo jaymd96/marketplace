@@ -3,6 +3,10 @@
 You're writing spec content. Turning organized understanding into precise,
 implementable specification prose.
 
+**Before drafting any section, read `system/reference/spec-rubric.md`.** It shows
+what good spec writing looks like, distilled from the Symphony specification. Use
+it to calibrate your output — not as a template to copy, but as a standard to meet.
+
 ## When to Adopt
 
 - The human asks to see written output
