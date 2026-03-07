@@ -67,19 +67,22 @@ spec-builder/                         # Landing zone
   README.md                           # Harness architecture and design rationale
   plugin.toml                         # Plugin manifest
 
-  agents/                             # Subagents (isolated context)
+  agents/                             # Subagents (isolated context, parallel)
     orient.md                         # Session-start briefing
-    consistency-checker.md            # Cross-document contradiction finder
-    spec-reviewer.md                  # 5-dimension spec quality auditor
+    consistency-checker.md            # Parallel cross-document contradiction finder
+    spec-reviewer.md                  # Parallel quality reviewer (confidence-scored)
+    spec-auditor.md                   # Parallel rubric-based readiness auditor
 
-  skills/                             # Invocable commands
-    spec-session.md                   # Main entry point
-    orient.md                         # Quick briefing via subagent
+  commands/                           # Orchestrating commands
+    spec.md                           # Full session lifecycle (orient → converse → checkpoint)
+
+  skills/                             # Targeted actions
     new-feature.md                    # Create feature tracking directory
     checkpoint.md                     # Session-end protocol
     coverage.md                       # Feature status table
-    consistency.md                    # Find contradictions
-    review.md                         # Spec quality audit
+    consistency.md                    # Parallel contradiction check
+    review.md                         # Parallel spec quality review
+    audit.md                          # Parallel rubric-based readiness audit
 
   scripts/                            # Mechanical operations
     bootstrap-project.sh              # Create project directory
