@@ -22,6 +22,12 @@
       "source": "./plugins/research-builder",
       "description": "Refine research ideas through extended conversation. Track idea threads, build concept graphs, link to prior work, and progressively tighten arguments into formal results.",
       "version": "1.0.0"
+    },
+    {
+      "name": "python-toolkit",
+      "source": "./plugins/python-toolkit",
+      "description": "Opinionated Python development toolkit. Architecture rules for large codebases, 48 pinned library references, testing patterns, project scaffolding. Python 3.12+ / uv / ruff / mypy.",
+      "version": "1.0.0"
     }
   ],
   "metadata": {

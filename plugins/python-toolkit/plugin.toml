@@ -1,0 +1,4 @@
+[plugin]
+name = "python-toolkit"
+version = "1.0.0"
+description = "Opinionated Python development toolkit. Architecture rules for large codebases, 48 pinned library references, testing patterns, and project scaffolding. Python 3.12+ / uv / ruff / mypy."
