@@ -13,6 +13,7 @@ A Claude Code plugin marketplace maintained by **jaymd96**.
 | python-toolkit | 1.0.0 | local | Opinionated Python development toolkit. Architecture rules for large codebases, 48 pinned library references, testing patterns, and project scaffolding. Python 3.12+ / uv / ruff / mypy. |
 | research-builder | 1.0.0 | local | Refine research ideas through extended conversation. A harness for navigating the random walk of ideas, linking to prior work, and progressively tightening arguments into formal results. |
 | spec-builder | 1.0.0 | local | Build product specifications through extended human conversation. A harness for turning noisy, non-linear human input into coherent, implementable specs (Symphony-style). |
+| xquik-x-data | 1.0.0 | local | Guide Xquik REST API and remote MCP workflows for X data, exports, monitoring, and webhooks. |
 
 ## Usage
 

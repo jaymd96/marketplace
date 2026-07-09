@@ -34,6 +34,12 @@
       "source": "./plugins/spec-builder",
       "description": "Build product specifications through extended human conversation. A harness for turning noisy, non-linear human input into coherent, implementable specs (Symphony-style).",
       "version": "1.0.0"
+    },
+    {
+      "name": "xquik-x-data",
+      "source": "./plugins/xquik-x-data",
+      "description": "Guide Xquik REST API and remote MCP workflows for X data, exports, monitoring, and webhooks.",
+      "version": "1.0.0"
     }
   ],
   "metadata": {
