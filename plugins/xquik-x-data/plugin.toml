@@ -1,0 +1,4 @@
+[plugin]
+name = "xquik-x-data"
+version = "1.0.0"
+description = "Guide Xquik REST API and remote MCP workflows for X data, exports, monitoring, and webhooks."
